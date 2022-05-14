@@ -1,18 +1,19 @@
 import request from '@/utils/request'
 
+// 用户登录
 export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/acl/index/login',
     method: 'post',
     data
   })
 }
 
-export function getInfo(token) {
+// 获取用户信息
+export function getInfo() {
   return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
+    url: '/acl/index/info',
+    method: 'get'
   })
 }
 

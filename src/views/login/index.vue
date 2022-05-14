@@ -1,11 +1,14 @@
 <template>
   <div class="login-container">
+    <!-- el-form element表单组件【提供表单布局、表单验证、表单提交】 -->
+    <!-- model 表单的数据  rules 表单校验规则 -->
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" auto-complete="on" label-position="left">
-
+      <!-- 登录标题 -->
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">智商城管理系统登录</h3>
       </div>
-
+      <!-- el-form-item 表单项组件 -->
+      <!-- prop 校验的字段名 -->
       <el-form-item prop="username">
         <span class="svg-container">
           <svg-icon icon-class="user" />
@@ -13,7 +16,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="请输入登录用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -30,7 +33,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="请输入登录密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -41,7 +44,15 @@
         </span>
       </el-form-item>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
+      <!-- native 绑定原生事件  prevent 阻止默认行为 -->
+      <el-button
+        :loading="loading"
+        type="primary"
+        style="width:100%;margin-bottom:30px;"
+        @click.native.prevent="handleLogin"
+      >
+        登录
+      </el-button>
 
       <div class="tips">
         <span style="margin-right:20px;">username: admin</span>
@@ -74,8 +85,8 @@ export default {
     }
     return {
       loginForm: {
-        username: 'admin',
-        password: '111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -95,24 +106,34 @@ export default {
     }
   },
   methods: {
+    // 显示密码
     showPwd() {
       if (this.passwordType === 'password') {
         this.passwordType = ''
       } else {
         this.passwordType = 'password'
       }
+      // 等待密码框类型设置完毕后 再设置密码框获取焦点
       this.$nextTick(() => {
         this.$refs.password.focus()
       })
     },
+    // 进行登录
     handleLogin() {
+      // 1. 进行表单校验  validate 校验方法 => true 校验成功  false
       this.$refs.loginForm.validate(valid => {
+        // 2. 判断校验是否成功
         if (valid) {
+          // 3. 开启按钮加载状态
           this.loading = true
+          // 4. 派发action 进行登录
           this.$store.dispatch('user/login', this.loginForm).then(() => {
+            // 5. 跳转到首页
             this.$router.push({ path: this.redirect || '/' })
+            // 6. 关闭按钮加载状态
             this.loading = false
           }).catch(() => {
+            // 6. 关闭按钮加载状态
             this.loading = false
           })
         } else {

@@ -53,3 +53,14 @@
 + `package.json`     项目依赖包配置文件
 + `postcss.config.js` CSS兼容性配置文件
 + `vue.config.js`     vue项目配置文件
+
+## 项目初始化
+1. 提交到远程仓库
+2. 将英文改成中文
+3. 更改登录页面代码里面
+
+## 实现登录功能
+1. 更改登录接口地址 `src/api/user.js`
+2. 在`vue.config.js` 配置代理 解决接口跨域问题
+3. 修改获取用户信息接口  `admin/acl/index/info`
+4. 修改请求拦截器中 `token字段`

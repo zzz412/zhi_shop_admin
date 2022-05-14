@@ -32,11 +32,18 @@ module.exports = {
   devServer: {
     port: port,
     open: true,
+    // 关闭页面错误提示
     overlay: {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js')
+    // 代理服务器
+    proxy: {
+      '/admin': {
+        target: 'http://sph-h5-api.atguigu.cn'
+      }
+    }
+    // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
