@@ -1,0 +1,55 @@
+# 智商城后台管理系统
+
+> 作用：  管理智商城的正常运作
+
+## 什么是后台管理系统
+简单介绍: 对数据进行增删改查的一个可视化系统
+
+方便更好的对数据进行管理和维护
+
+**作为管理系统他的核心点：**
+功能， 至于页面效果、页面布局 能看就行
+所以一般做管理系统 他的UI界面都是千篇一律的
+
+## 使用合理的管理系统模板
+因为管理系统的核心在于功能 所以对于界面要求不高
+那么我们就可以采用别人【大神】写好的模板 去套用  
+我们只需要关注功能即可, 界面直接使用模板就好
+
+推荐使用的后台模板：
++ vue-admin-element    =>    element-ui
+    基础版:  https://github.com/PanJiaChen/vue-admin-template.git
+    完整版:  https://github.com/PanJiaChen/vue-element-admin.git
++ vue-antd-pro         =>    antd
++ vue-iview            =>    iview
+
+## 构建vue-admin-template项目
+1. 克隆: `git clone https://github.com/PanJiaChen/vue-admin-template.git zhi_shop_admin`
+    **由于网络问题可以使用国内码云进行克隆: **
+      `git clone https://gitee.com/panjiachen/vue-admin-template.git zhi_shop_admin`
+
+2. 进入 `zhi_shop_admin`项目   下载依赖包 `npm i `
+
+3. 启动项目  `npm run dev`
+
+
+## 项目结构介绍
++ `build` webpack打包配置目录
++ `mock`  模拟js目录
++ `node_modules` 项目依赖包目录
++ `public`  项目静态资源目录
++ `src`     项目主要代码目录
++ `tests`   单元测试目录
++ `·editorconfig`  编辑器风格配置文件
++ `.env-*`         打包环境变量配置文件
++ `.eslintignore`  eslint检查忽略清单
++ `.eslintrc`      eslint配置文件
++ `.gitignore`       git检查忽略清单
++ `.travis.yml`      测试配置文件
++ `.babel.config.js` babel的配置文件
++ `.jest.config.js`  测试配置文件
++ `jsconfig.json`    编辑器配置文件
++ `LICENSE`          知识产权信息【开源信息】
++ `package.json`     项目依赖包配置文件
++ `postcss.config.js` CSS兼容性配置文件
++ `vue.config.js`     vue项目配置文件
