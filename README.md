@@ -1,6 +1,7 @@
 # 智商城后台管理系统
-
 > 作用：  管理智商城的正常运作
+**项目地址:** `https://gitee.com/zzz412/zhi_shop_admin`
+**接口地址:** `https://console-docs.apipost.cn/preview/4dec54a351857399/805e5f8460a8ba72`
 
 ## 什么是后台管理系统
 简单介绍: 对数据进行增删改查的一个可视化系统
