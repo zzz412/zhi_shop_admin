@@ -65,3 +65,19 @@
 2. 在`vue.config.js` 配置代理 解决接口跨域问题
 3. 修改获取用户信息接口  `admin/acl/index/info`
 4. 修改请求拦截器中 `token字段`
+
+## 实现退出登录功能
+1. 更改退出登录接口地址 `src/api/user.js`
+2. 修改 layout中 退出登录按钮 结构
+
+## 完善管理系统功能【构建路由】
++ 首页【数据展示】  dashboard
++ 商品管理         goods
+  + 品牌             trademark
+  + 属性             attr
+  + SPU              spu 
+  + SKU              sku
++ 权限管理        admin
+  + 用户            user
+  + 角色            role
+  + 权限管理        rights

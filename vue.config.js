@@ -38,9 +38,12 @@ module.exports = {
       errors: true
     },
     // 代理服务器
+    //    http://sph-h5-api.atguigu.cn/ys/admin/acl/index/login
+    //    http://sph-h5-api.atguigu.cn/admin/acl/index/login
     proxy: {
-      '/admin': {
-        target: 'http://sph-h5-api.atguigu.cn'
+      '/ys': {
+        target: 'http://sph-h5-api.atguigu.cn',
+        pathRewrite: { '^/ys': '' }
       }
     }
     // before: require('./mock/mock-server.js')

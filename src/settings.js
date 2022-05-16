@@ -1,6 +1,6 @@
 module.exports = {
-
-  title: 'Vue Admin Template',
+  // 页面标题配置
+  title: 'Zhi Shop Admin',
 
   /**
    * @type {boolean} true | false

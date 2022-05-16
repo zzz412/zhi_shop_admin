@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth'
 // 创建axios实例
 const service = axios.create({
   // 设置根路径
-  baseURL: '/admin',
+  baseURL: '/ys',
   // withCredentials: true, // send cookies when cross-domain requests
   // 设置超时时间
   timeout: 5000
