@@ -71,6 +71,7 @@
 2. 修改 layout中 退出登录按钮 结构
 
 ## 完善管理系统功能【构建路由】
+1. 分析功能
 + 首页【数据展示】  dashboard
 + 商品管理         goods
   + 品牌             trademark
@@ -81,3 +82,45 @@
   + 用户            user
   + 角色            role
   + 权限管理        rights
+
+2. 构建路由表
+
+3. 在index.scss 添加一段全局样式
+
+## 实现品牌管理页面逻辑
+
+### 编写品牌管理页面 静态页面结构
+1. vue-helper  element-ui 提示插件
+2. el-button 按钮组件
+    + 常用属性
+        type 按钮类型
+        size 按钮大小
+        icon 按钮图标
+
+3. el-table 表格组件
+    + 常用属性
+        data 表格数据
+        border 表格边框
+        stripe 隔行变色
+        header-cell-style 表头单元格样式
+
+4. el-table-column 表格项
+    + 常用属性
+        width 宽度
+        label 标题
+        align 对齐方式
+        prop  渲染字段
+    
+    + 自定义表格项【添加插槽】
+      <el-table-column>
+        <template v-slot="{ row, $index }">
+          {{row}} 当前行数据
+          {{$index}} 当前行索引
+        </template>
+      </el-table-column>
+
+5. el-pagination 分页器组件
+    + 常用属性
+      layout  分页器布局【prev pager next total sizes ->】
+      total   总条数
+      background 背景色
