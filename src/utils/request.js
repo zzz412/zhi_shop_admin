@@ -81,9 +81,9 @@ service.interceptors.response.use(
   },
   // 响应失败
   error => {
-    console.log('err' + error) // for debug
+    // console.log('err' + error) // for debug
     Message({
-      message: error.message,
+      message: error,
       type: 'error',
       duration: 5 * 1000
     })
