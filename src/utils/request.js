@@ -51,7 +51,7 @@ service.interceptors.response.use(
     const res = response.data
 
     // code码不为20000都是错误
-    if (res.code !== 20000) {
+    if (res.code !== 20000 && res.code !== 200) {
       // 显示错误信息提示
       Message({
         message: res.message || 'Error',

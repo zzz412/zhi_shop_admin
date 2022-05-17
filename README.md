@@ -121,6 +121,29 @@
 
 5. el-pagination 分页器组件
     + 常用属性
-      layout  分页器布局【prev pager next total sizes ->】
-      total   总条数
-      background 背景色
+      layout       分页器布局【prev pager next total sizes ->】
+      total        总条数
+      background   背景色
+      current-page 当前页码
+      page-size    每页条数
+    
+    + 常用事件
+      current-change  页码改变事件      参数：当前页码
+      size-change     每页条数改变事件  参数: 每页条数
+
+### 分析品牌管理功能
+1. 品牌列表展示
+     + 表格显示
+     + 分页显示
+     + 切换每页条数
+
+2. 品牌添加
+    + 弹窗
+    + 规则校验
+    + 图片上传 ->  限制格式、限制图片大小
+
+3. 品牌修改
+    + 弹窗
+
+4. 品牌删除
+    + 删除提示
