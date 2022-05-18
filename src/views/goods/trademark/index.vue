@@ -228,6 +228,11 @@ export default {
 
 <style lang="scss" scoped>
 .avatar-uploader::v-deep  {
+  .el-upload-dragger {
+    border: 0;
+    width: auto;
+    height: auto;
+  }
   .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;

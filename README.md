@@ -3,7 +3,7 @@
 **项目地址:** `https://gitee.com/zzz412/zhi_shop_admin`
 **接口地址:** `https://console-docs.apipost.cn/preview/4dec54a351857399/805e5f8460a8ba72`
 
-## 什么是后台管理系统
+## 1. 什么是后台管理系统
 简单介绍: 对数据进行增删改查的一个可视化系统
 
 方便更好的对数据进行管理和维护
@@ -12,7 +12,7 @@
 功能， 至于页面效果、页面布局 能看就行
 所以一般做管理系统 他的UI界面都是千篇一律的
 
-## 使用合理的管理系统模板
+## 2. 使用合理的管理系统模板
 因为管理系统的核心在于功能 所以对于界面要求不高
 那么我们就可以采用别人【大神】写好的模板 去套用  
 我们只需要关注功能即可, 界面直接使用模板就好
@@ -24,7 +24,7 @@
 + vue-antd-pro         =>    antd
 + vue-iview            =>    iview
 
-## 构建vue-admin-template项目
+## 3. 构建vue-admin-template项目
 1. 克隆: `git clone https://github.com/PanJiaChen/vue-admin-template.git zhi_shop_admin`
     **由于网络问题可以使用国内码云进行克隆: **
       `git clone https://gitee.com/panjiachen/vue-admin-template.git zhi_shop_admin`
@@ -34,7 +34,7 @@
 3. 启动项目  `npm run dev`
 
 
-## 项目结构介绍
+## 4. 项目结构介绍
 + `build` webpack打包配置目录
 + `mock`  模拟js目录
 + `node_modules` 项目依赖包目录
@@ -55,22 +55,22 @@
 + `postcss.config.js` CSS兼容性配置文件
 + `vue.config.js`     vue项目配置文件
 
-## 项目初始化
+## 5. 项目初始化
 1. 提交到远程仓库
 2. 将英文改成中文
 3. 更改登录页面代码里面
 
-## 实现登录功能
+## 6. 实现登录功能
 1. 更改登录接口地址 `src/api/user.js`
 2. 在`vue.config.js` 配置代理 解决接口跨域问题
 3. 修改获取用户信息接口  `admin/acl/index/info`
 4. 修改请求拦截器中 `token字段`
 
-## 实现退出登录功能
+## 7. 实现退出登录功能
 1. 更改退出登录接口地址 `src/api/user.js`
 2. 修改 layout中 退出登录按钮 结构
 
-## 完善管理系统功能【构建路由】
+## 8. 完善管理系统功能【构建路由】
 1. 分析功能
 + 首页【数据展示】  dashboard
 + 商品管理         goods
@@ -87,7 +87,7 @@
 
 3. 在index.scss 添加一段全局样式
 
-## 实现品牌管理页面逻辑
+## 9. 实现品牌管理页面逻辑
 
 ### 编写品牌管理页面 静态页面结构
 1. vue-helper  element-ui 提示插件
@@ -147,3 +147,11 @@
 
 4. 品牌删除
     + 删除提示
+
+## 10. 实现品牌属性管理
+### 完成品牌属性管理静态页面搭建
++ 卡片1 `el-card`
+  + 分类三级联动组件 `category`
++ 卡片2 `el-card`
+  + 添加按钮 `el-button`
+  + 数据表格 `el-table`
