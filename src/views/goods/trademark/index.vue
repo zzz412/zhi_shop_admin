@@ -16,7 +16,7 @@
       </el-table-column>
       <el-table-column label="操作">
         <template v-slot="{ row }">
-          <el-button style="margin-right: 10px;" type="warning" size="mini" icon="el-icon-edit">修改</el-button>
+          <el-button style="margin-right: 10px;" type="warning" size="mini" icon="el-icon-edit" @click="updateTrademark(row)">修改</el-button>
           <el-popconfirm title="你确定要删除吗?" icon="el-icon-delete" icon-color="#409eff" @onConfirm="deleteTrademark(row.id)">
             <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete">删除</el-button>
           </el-popconfirm>
@@ -44,13 +44,13 @@
       :visible="dialogVisible"
       width="width"
     >
-      <!-- 内容 -->
-      <el-form ref="tmForm" :model="tmForm" label-width="80px">
-        <!-- 表单项 -->
-        <el-form-item label="品牌名称">
+      <!-- 内容 rules 校验规则-->
+      <el-form ref="tmForm" :model="tmForm" :rules="tmFromRules" label-width="90px">
+        <!-- 表单项  prop校验规则名-->
+        <el-form-item label="品牌名称" prop="tmName">
           <el-input v-model="tmForm.tmName" placeholder="请输入品牌名称" />
         </el-form-item>
-        <el-form-item label="品牌Logo">
+        <el-form-item label="品牌Logo" prop="logoUrl">
           <!-- action 设置上传地址  -->
           <el-upload
             class="avatar-uploader"
@@ -68,15 +68,15 @@
       </el-form>
       <!-- 底部操作 -->
       <div slot="footer">
-        <el-button @click="dialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button @click="submitCancel">取 消</el-button>
+        <el-button type="primary" @click="submitFrom">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { reqTrademarkList, reqRemoveTrademark } from '@/api/goods/trademark'
+import { reqTrademarkList, reqRemoveTrademark, reqAddOrUpdateTrademark } from '@/api/goods/trademark'
 
 export default {
   name: 'Trademark',
@@ -98,6 +98,15 @@ export default {
       tmForm: {
         tmName: '',
         logoUrl: ''
+      },
+      // 表单校验规则
+      tmFromRules: {
+        tmName: [
+          // required 必填  message 提示信息  trigger 触发方式【input】 min 最小值  max 最大值
+          { required: true, message: '品牌名称不能为空' },
+          { min: 2, max: 10, message: '长度需要在2-10之间' }
+        ],
+        logoUrl: [{ required: true, message: '品牌Logo不能为空' }]
       }
     }
   },
@@ -175,6 +184,43 @@ export default {
       console.log(res)
       // 1. 保存上传后的结果
       this.tmForm.logoUrl = res.data
+    },
+    // 表单数据提交
+    async submitFrom() {
+      // 1. 校验字段是否符合要求   validate 表单校验方法
+      try {
+        await this.$refs.tmForm.validate()
+        console.log('校验成功')
+        // 2. 发起请求 操作品牌
+        await reqAddOrUpdateTrademark(this.tmForm)
+        // 3. 操作成功
+        this.$message.success(this.tmForm.id ? '修改成功' : '新增成功')
+        // // 4. 重置输入框内容
+        // this.$refs.tmForm.resetFields()
+        // // 5. 关闭对话框
+        // this.dialogVisible = false
+        this.submitCancel()
+        // 6. 重新获取品牌数据
+        this.getTradeMarkList()
+      } catch (error) {
+        console.log('校验失败')
+      }
+    },
+    // 表单取消提交
+    submitCancel() {
+      this.tmForm = { tmName: '', logoUrl: '' }
+      this.dialogVisible = false
+      // 待页面更新后 重置表单校验状态
+      this.$nextTick(() => {
+        this.$refs.tmForm.clearValidate()
+      })
+    },
+    // 修改品牌
+    updateTrademark(row) {
+      // 1. 将字段填充到表单中
+      this.tmForm = { ...row }
+      // 2. 显示对话框
+      this.dialogVisible = true
     }
   }
 }
