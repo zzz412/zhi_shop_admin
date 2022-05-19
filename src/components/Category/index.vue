@@ -16,7 +16,7 @@
       </el-form-item>
       <!-- 三级 -->
       <el-form-item label="三级分类">
-        <el-select v-model="cateFrom.category3Id" placeholder="请选择分类">
+        <el-select v-model="cateFrom.category3Id" placeholder="请选择分类" @change="selectOver">
           <el-option v-for="c3 in c3List" :key="c3.id" :value="c3.id" :label="c3.name">{{ c3.name }}</el-option>
         </el-select>
       </el-form-item>
@@ -62,6 +62,8 @@ export default {
       this.c3List = []
       this.cateFrom.category2Id = ''
       this.cateFrom.category3Id = ''
+      // 通知父组件
+      this.$emit('category', { ...this.cateFrom })
       const res = await reqCategory2(id)
       this.c2List = res.data
     },
@@ -70,8 +72,14 @@ export default {
       // 清除三级的数据
       this.c3List = []
       this.cateFrom.category3Id = ''
+      // 通知父组件
+      this.$emit('category', { ...this.cateFrom })
       const res = await reqCategory3(id)
       this.c3List = res.data
+    },
+    // 选择完成
+    selectOver() {
+      this.$emit('category', { ...this.cateFrom })
     }
   }
 }
