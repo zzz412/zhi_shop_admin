@@ -45,7 +45,14 @@
         <!-- 属性值表格 -->
         <el-table :data="attrForm.attrValueList" border style="margin: 10px 0;">
           <el-table-column type="index" label="序号" width="80" align="center" />
-          <el-table-column prop="valueName" label="属性值名称" />
+          <el-table-column prop="valueName" label="属性值名称">
+            <template v-slot="{ row, $index }">
+              <!-- 输入框 -->
+              <el-input v-if="row.show" :ref="'input' + $index" v-model.trim="row.valueName" type="text" size="mini" @blur="editAttrValue(row, $index)" />
+              <!-- 文本内容 -->
+              <div v-else>{{ row.valueName }}</div>
+            </template>
+          </el-table-column>
           <el-table-column label="操作">
             <template v-slot="{ $index }">
               <el-button type="danger" size="mini" icon="el-icon-delete" @click="attrForm.attrValueList.splice($index, 1)">删除</el-button>
@@ -78,12 +85,8 @@ export default {
       // 属性表单
       attrForm: {
         attrName: '', // 属性名
-        // 属性值列表
-        attrValueList: [
-          { valueName: '阿萨大' },
-          { valueName: '阿萨大1' },
-          { valueName: '阿萨大2' }
-        ]
+        // 属性值列表  { id: 1, attrId: 2, valueName: 'asd' }
+        attrValueList: []
       }
     }
   },
@@ -112,8 +115,23 @@ export default {
     },
     // 添加属性值
     addAttrValue() {
-      // 1. 向属性值列表添加属性
-      this.attrForm.attrValueList.push({ valueName: '爱睡觉的老咔叽' })
+      // 1. 向属性值列表添加属性  { id: 1, attrId: 2, valueName: 'asd' }
+      this.attrForm.attrValueList.push({ valueName: '', show: true })
+      // 2. 设置对应字段的输入框获取焦点  输入框.focus()
+      this.$nextTick(() => {
+        const index = this.attrForm.attrValueList.length - 1
+        this.$refs['input' + index].focus()
+      })
+    },
+    // 修改属性值
+    editAttrValue(row, index) {
+      // 1. 不能为空
+      if (!row.valueName.length) return this.$message.warning('属性值不能为空！！！') && this.$refs['input' + index].focus()
+      // 2. 不能与之前的值重复  【不能为自己比较 并且 item的值与row的值相等】
+      const isRepeat = this.attrForm.attrValueList.some(item => item !== row && item.valueName === row.valueName)
+      if (isRepeat) return this.$message.warning('属性值不能重复！！！') && this.$refs['input' + index].focus()
+      // 3. 更改字段的show状态 = false
+      row.show = false
     }
   }
 }
