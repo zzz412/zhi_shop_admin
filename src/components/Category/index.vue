@@ -4,19 +4,19 @@
     <el-form ref="form" inline :model="cateFrom" label-width="80px">
       <!-- 一级 -->
       <el-form-item label="一级分类">
-        <el-select v-model="cateFrom.category1Id" placeholder="请选择分类" @change="getCategory2">
+        <el-select v-model="cateFrom.category1Id" placeholder="请选择分类" :disabled="isDs" @change="getCategory2">
           <el-option v-for="c1 in c1List" :key="c1.id" :value="c1.id" :label="c1.name">{{ c1.name }}</el-option>
         </el-select>
       </el-form-item>
       <!-- 二级 -->
       <el-form-item label="二级分类">
-        <el-select v-model="cateFrom.category2Id" placeholder="请选择分类" @change="getCategory3">
+        <el-select v-model="cateFrom.category2Id" placeholder="请选择分类" :disabled="isDs" @change="getCategory3">
           <el-option v-for="c2 in c2List" :key="c2.id" :value="c2.id" :label="c2.name">{{ c2.name }}</el-option>
         </el-select>
       </el-form-item>
       <!-- 三级 -->
       <el-form-item label="三级分类">
-        <el-select v-model="cateFrom.category3Id" placeholder="请选择分类" @change="selectOver">
+        <el-select v-model="cateFrom.category3Id" placeholder="请选择分类" :disabled="isDs" @change="selectOver">
           <el-option v-for="c3 in c3List" :key="c3.id" :value="c3.id" :label="c3.name">{{ c3.name }}</el-option>
         </el-select>
       </el-form-item>
@@ -29,6 +29,13 @@ import { reqCategory1, reqCategory2, reqCategory3 } from '@/api/goods/attr'
 
 export default {
   name: 'Category',
+  props: {
+    // 是否禁用选择器
+    isDs: {
+      type: Boolean,
+      default: false
+    }
+  },
   data() {
     return {
       // 分类数据

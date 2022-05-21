@@ -3,7 +3,7 @@
     <!-- 卡片1 -->
     <el-card>
       <!-- 三级联动组件 -->
-      <Category @category="getCategory" />
+      <Category :is-ds="sceneId === 2" @category="getCategory" />
     </el-card>
     <!-- 卡片2 -->
     <el-card style="margin: 20px 0;">
@@ -25,7 +25,7 @@
           <el-table-column label="操作" width="200">
             <template v-slot="{ row }">
               <el-button style="margin-right: 10px;" type="warning" size="mini" icon="el-icon-edit" @click="editAttr(row)">修改</el-button>
-              <el-popconfirm title="你确定要删除吗?" icon="el-icon-delete" icon-color="#409eff">
+              <el-popconfirm title="你确定要删除吗?" icon="el-icon-delete" icon-color="#409eff" @onConfirm="deleteAttr(row.id)">
                 <el-button slot="reference" type="danger" size="mini" icon="el-icon-delete">删除</el-button>
               </el-popconfirm>
             </template>
@@ -77,7 +77,7 @@
 
 <script>
 import Category from '@/components/Category'
-import { reqAttrList, reqAddOrUpdateAttr } from '@/api/goods/attr'
+import { reqAttrList, reqAddOrUpdateAttr, reqDeleteAttr } from '@/api/goods/attr'
 import cloneDeep from 'lodash/cloneDeep'
 
 export default {
@@ -122,10 +122,8 @@ export default {
     },
     // 获取品牌属性列表
     async getAttrList() {
-      // 清空属性列表
-      this.attrList = []
-      // 判断是否选择了所有分类
-      if (!this.isSelectCate) return
+      // 判断是否选择了所有分类 清空属性列表
+      if (!this.isSelectCate) return (this.attrList = [])
       const res = await reqAttrList(this.cates)
       this.attrList = res.data
     },
@@ -203,6 +201,15 @@ export default {
         this.getAttrList()
       } catch (error) {
         console.log('提交失败')
+      }
+    },
+    // 删除属性
+    async deleteAttr(id) {
+      try {
+        await reqDeleteAttr(id)
+        this.getAttrList()
+      } catch (error) {
+        console.log('删除失败')
       }
     }
   }
