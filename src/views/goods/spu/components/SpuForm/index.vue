@@ -1,5 +1,5 @@
 <template>
-  <div class="scene2">
+  <div v-loading="loading" class="scene2">
     <!-- 表单 -->
     <el-form ref="spuForm" :model="spuForm" label-width="80px">
       <!-- 表单项 -->
@@ -94,14 +94,14 @@
       <!-- 操作 -->
       <el-form-item>
         <el-button type="primary" @click="submitForm">保存</el-button>
-        <el-button @click="$emit('switchScene', 1)">取消</el-button>
+        <el-button @click="cancel">取消</el-button>
       </el-form-item>
     </el-form>
   </div>
 </template>
 
 <script>
-import { reqTrademark, reqAttrList, reqAddOrSaveSpu } from '@/api/goods/spu'
+import { reqTrademark, reqAttrList, reqAddOrSaveSpu, reqSpuInfo, reqSpuImageList } from '@/api/goods/spu'
 
 export default {
   name: 'SpuForm',
@@ -114,6 +114,7 @@ export default {
   },
   data() {
     return {
+      loading: false,
       // 表单数据
       spuForm: {
         // spu图片列表
@@ -140,9 +141,6 @@ export default {
       // 图片列表
       fileList: []
     }
-  },
-  mounted() {
-    this.initData()
   },
   methods: {
     // 删除图片列表
@@ -218,7 +216,7 @@ export default {
     async submitForm() {
       // 将fileList的图片列表 按照格式保存到 spuImageList中
       // { imageName: '图片名', imgUrl: '图片地址' }
-      this.spuForm.spuImageList = this.fileList.map(item => ({ imageName: item.name, imgUrl: item.response && item.response.data }))
+      this.spuForm.spuImageList = this.fileList.map(item => ({ imageName: item.name, imgUrl: (item.response && item.response.data) || item.url }))
       // 设置分类ID
       this.spuForm.category3Id = this.cate3Id
       // 提交到服务器去
@@ -233,14 +231,27 @@ export default {
         console.log('失败', error)
       }
     },
+    // 取消操作
+    cancel() {
+      this.$emit('switchScene', 1)
+      Object.assign(this.$data, this.$options.data())
+    },
     // 初始化数据
-    async initData() {
-      // 获取品牌列表
-      const { data } = await reqTrademark()
-      this.trademarkList = data
-      // 获取销售属性列表
-      const { data: data2 } = await reqAttrList()
-      this.saleAttrList = data2
+    async initData(id) {
+      this.loading = true
+      const promise_arr = [reqTrademark(), reqAttrList()]
+      // 有id 则额外发送俩个请求
+      if (id) promise_arr.push(reqSpuInfo(id), reqSpuImageList(id))
+      // 将请求 一并分发 promise.all
+      const res_arr = await Promise.all(promise_arr)
+      this.trademarkList = res_arr[0].data
+      this.saleAttrList = res_arr[1].data
+      // 有id 则额外操作SPU信息与图片列表
+      if (id) {
+        this.spuForm = res_arr[2].data
+        this.fileList = res_arr[3].data.map(item => ({ ...item, name: item.imgName, url: item.imgUrl }))
+      }
+      this.loading = false
     }
   }
 }

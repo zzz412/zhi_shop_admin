@@ -18,3 +18,8 @@ export const reqAddOrSaveSpu = data => {
   }
 }
 
+// 获取SPU详情
+export const reqSpuInfo = id => request({ url: `/admin/product/getSpuById/${id}`, method: 'get' })
+
+// 获取SPU图片列表
+export const reqSpuImageList = id => request({ url: `/admin/product/spuImageList/${id}`, method: 'get' })
