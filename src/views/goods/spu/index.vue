@@ -36,7 +36,7 @@
         />
       </div>
       <!-- 场景2  SPU添加 -->
-      <SpuForm v-show="sceneId === 2" @switchScene="switchScene" />
+      <SpuForm v-show="sceneId === 2" :cate3-id="cates.category3Id" @switchScene="switchScene" />
       <!-- 场景3  SKU添加 -->
       <SkuForm v-show="sceneId === 3" @switchScene="switchScene" />
     </el-card>
@@ -109,8 +109,10 @@ export default {
       this.getSpuList()
     },
     // 场景值切换
-    switchScene(id) {
+    switchScene(id, flag) {
       this.sceneId = id
+      // 如果flag为true 说明需要重新加载SPU列表
+      if (flag) this.getSpuList()
     }
   }
 }

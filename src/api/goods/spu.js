@@ -8,3 +8,13 @@ export const reqTrademark = () => request({ url: `/admin/product/baseTrademark/g
 
 // 获取销售属性列表
 export const reqAttrList = () => request({ url: `/admin/product/baseSaleAttrList`, method: 'get' })
+
+// 新增 或 修改SPU
+export const reqAddOrSaveSpu = data => {
+  if (data.id) {
+    return request({ url: `/admin/product/updateSpuInfo`, method: 'post', data })
+  } else {
+    return request({ url: `/admin/product/saveSpuInfo`, method: 'post', data })
+  }
+}
+
