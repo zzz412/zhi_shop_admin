@@ -23,3 +23,6 @@ export const reqSpuInfo = id => request({ url: `/admin/product/getSpuById/${id}`
 
 // 获取SPU图片列表
 export const reqSpuImageList = id => request({ url: `/admin/product/spuImageList/${id}`, method: 'get' })
+
+// 获取SPU的销售属性
+export const reqSpuSaleList = id => request({ url: `/admin/product/spuSaleAttrList/${id}`, method: 'get' })

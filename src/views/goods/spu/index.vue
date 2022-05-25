@@ -17,7 +17,7 @@
           <el-table-column label="SPU描述" prop="description" />
           <el-table-column label="操作">
             <template v-slot="{ row }">
-              <el-button style="margin-right: 10px;" type="primary" size="mini" icon="el-icon-plus" @click="sceneId = 3" />
+              <el-button style="margin-right: 10px;" type="primary" size="mini" icon="el-icon-plus" @click="addSku(row)" />
               <el-button style="margin-right: 10px;" type="warning" size="mini" icon="el-icon-edit" @click="addSpu(row.id)" />
             </template>
           </el-table-column>
@@ -38,7 +38,7 @@
       <!-- 场景2  SPU添加 -->
       <SpuForm v-show="sceneId === 2" ref="spuForm" :cate3-id="cates.category3Id" @switchScene="switchScene" />
       <!-- 场景3  SKU添加 -->
-      <SkuForm v-show="sceneId === 3" @switchScene="switchScene" />
+      <SkuForm v-show="sceneId === 3" ref="skuForm" @switchScene="switchScene" />
     </el-card>
   </div>
 </template>
@@ -67,7 +67,7 @@ export default {
       // 总条数
       total: 0,
       // 场景ID  1数据 2SPU 3SKU
-      sceneId: 1
+      sceneId: 3
     }
   },
   methods: {
@@ -119,6 +119,13 @@ export default {
       this.sceneId = 2
       // 重新加载数据
       this.$refs.spuForm.initData(id)
+    },
+    // 进入添加Sku场景
+    addSku(row) {
+      // 切换场景
+      this.sceneId = 3
+      // 调用初始化方法 加载数据
+      this.$refs.skuForm.initData(this.cates, row)
     }
   }
 }
