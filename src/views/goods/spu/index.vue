@@ -2,13 +2,13 @@
   <div>
     <el-card>
       <!-- 三级联动组件 -->
-      <Category @category="getCategory" />
+      <Category :is-ds="sceneId !== 1" @category="getCategory" />
     </el-card>
     <el-card style="margin: 10px 0;">
       <!-- 场景1  SPU列表显示 -->
       <div v-show="sceneId === 1" class="scene1">
         <!-- 添加按钮-->
-        <el-button type="primary" icon="el-icon-plus" @click="addSpu(0)">添加SPU</el-button>
+        <el-button type="primary" icon="el-icon-plus" :disabled="!cates.category3Id" @click="addSpu(0)">添加SPU</el-button>
         <!-- 表格数据 -->
         <el-table v-loading="isLoading" style="width: 100%;margin: 20px 0;" border :data="spuList">
           <!-- 表格项 -->
@@ -67,7 +67,7 @@ export default {
       // 总条数
       total: 0,
       // 场景ID  1数据 2SPU 3SKU
-      sceneId: 3
+      sceneId: 1
     }
   },
   methods: {

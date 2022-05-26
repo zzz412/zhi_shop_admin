@@ -26,3 +26,6 @@ export const reqSpuImageList = id => request({ url: `/admin/product/spuImageList
 
 // 获取SPU的销售属性
 export const reqSpuSaleList = id => request({ url: `/admin/product/spuSaleAttrList/${id}`, method: 'get' })
+
+// 新增SKU
+export const reqAddSku = data => request({ url: `/admin/product/saveSkuInfo`, method: 'post', data })
