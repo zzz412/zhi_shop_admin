@@ -19,6 +19,8 @@
             <template v-slot="{ row }">
               <el-button style="margin-right: 10px;" type="primary" size="mini" icon="el-icon-plus" @click="addSku(row)" />
               <el-button style="margin-right: 10px;" type="warning" size="mini" icon="el-icon-edit" @click="addSpu(row.id)" />
+              <el-button style="margin-right: 10px;" type="info" size="mini" icon="el-icon-view" @click="showSkuList(row.id)" />
+              <el-button style="margin-right: 10px;" type="danger" size="mini" icon="el-icon-delete" @click="deleteSpu(row.id)" />
             </template>
           </el-table-column>
         </el-table>
@@ -39,13 +41,26 @@
       <SpuForm v-show="sceneId === 2" ref="spuForm" :cate3-id="cates.category3Id" @switchScene="switchScene" />
       <!-- 场景3  SKU添加 -->
       <SkuForm v-show="sceneId === 3" ref="skuForm" @switchScene="switchScene" />
+      <!-- SKU列表 对话框 -->
+      <el-dialog title="SKU列表" :visible.sync="dialogVisible">
+        <el-table border :data="skuList">
+          <el-table-column prop="skuName" label="名称" />
+          <el-table-column prop="price" label="价格" />
+          <el-table-column prop="weight" label="重量" />
+          <el-table-column label="默认图片">
+            <template v-slot="{ row }">
+              <el-image :src="row.skuDefaultImg" style="width: 100px;" />
+            </template>
+          </el-table-column>
+        </el-table>
+      </el-dialog>
     </el-card>
   </div>
 </template>
 
 <script>
 import Category from '@/components/Category'
-import { reqSpuList } from '@/api/goods/spu'
+import { reqSpuList, reqDeleteSpu, reqSkuList } from '@/api/goods/spu'
 import SkuForm from './components/SkuForm'
 import SpuForm from './components/SpuForm'
 
@@ -67,7 +82,9 @@ export default {
       // 总条数
       total: 0,
       // 场景ID  1数据 2SPU 3SKU
-      sceneId: 1
+      sceneId: 1,
+      dialogVisible: false,
+      skuList: []
     }
   },
   methods: {
@@ -126,6 +143,20 @@ export default {
       this.sceneId = 3
       // 调用初始化方法 加载数据
       this.$refs.skuForm.initData(this.cates, row)
+    },
+    // 删除SPU
+    async deleteSpu(id) {
+      await reqDeleteSpu(id)
+      this.$message.success('删除成功')
+      // 控制页码
+      this.page = this.spuList.length > 1 ? this.page : this.page - 1
+      this.getSpuList()
+    },
+    // 显示SKU列表
+    async showSkuList(id) {
+      const res = await reqSkuList(id)
+      this.skuList = res.data
+      this.dialogVisible = true
     }
   }
 }

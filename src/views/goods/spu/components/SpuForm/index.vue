@@ -43,9 +43,9 @@
       <!-- 销售属性 -->
       <el-form-item label="销售属性">
         <!-- 选择框 value-key 设置匹配字段【值为对象时必填】-->
-        <el-select v-model="selectAttr" placeholder="请选择销售属性" value-key="id">
+        <el-select v-model="selectAttr" :placeholder="selectAttrList.length ? `还有${selectAttrList.length}个可选择` : '没了'" value-key="id">
           <el-option
-            v-for="item in saleAttrList"
+            v-for="item in selectAttrList"
             :key="item.id"
             :label="item.name"
             :value="item"
@@ -140,6 +140,14 @@ export default {
       selectAttr: '',
       // 图片列表
       fileList: []
+    }
+  },
+  computed: {
+    // 可选择的销售属性
+    selectAttrList() {
+      return this.saleAttrList.filter(item => {
+        return !this.spuForm.spuSaleAttrList.some(item2 => item2.baseSaleAttrId === item.id)
+      })
     }
   },
   methods: {

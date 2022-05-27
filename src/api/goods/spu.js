@@ -29,3 +29,10 @@ export const reqSpuSaleList = id => request({ url: `/admin/product/spuSaleAttrLi
 
 // 新增SKU
 export const reqAddSku = data => request({ url: `/admin/product/saveSkuInfo`, method: 'post', data })
+
+// 删除SPU
+export const reqDeleteSpu = id => request({ url: `/admin/product/deleteSpu/${id}`, method: 'delete' })
+
+// 获取SKU列表
+export const reqSkuList = id => request({ url: `/admin/product/findBySpuId/${id}`, method: 'get' })
+
