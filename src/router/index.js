@@ -50,6 +50,20 @@ export const constantRoutes = [
       meta: { title: '主页', icon: 'dashboard' }
     }]
   },
+  // 权限管理
+  {
+    path: '/acl',
+    component: Layout,
+    meta: { title: '权限管理', icon: 'el-icon-key' },
+    children: [
+      // 用户管理
+      { path: '/acl/user', component: () => import('@/views/acl/user'), meta: { title: '用户管理' }},
+      // 角色管理
+      { path: '/acl/role', component: () => import('@/views/acl/role'), meta: { title: '角色管理' }},
+      // 菜单管理
+      { path: '/acl/permission', component: () => import('@/views/acl/permission'), meta: { title: '菜单管理' }}
+    ]
+  },
   // 商品管理
   {
     path: '/goods',
