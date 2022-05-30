@@ -11,3 +11,9 @@ export const reqSaveUserRole = (userId, roleId) => request({ url: `/admin/acl/us
 
 // 添加 | 修改 用户
 export const reqAddOrUpdateUser = data => request({ url: `/admin/acl/user/${data.id ? 'update' : 'save'}`, method: data.id ? 'put' : 'post', data })
+
+// 删除用户
+export const reqRemoveUser = id => request({ url: `/admin/acl/user/remove/${id}`, method: 'delete' })
+
+// 批量删除用户
+export const reqBatchRemoveUser = data => request({ url: `/admin/acl/user/batchRemove`, method: 'delete', data })

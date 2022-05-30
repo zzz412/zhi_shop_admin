@@ -14,10 +14,10 @@
     <!-- 操作区域 -->
     <div class="opera-view">
       <el-button type="primary" @click="addUser">添加</el-button>
-      <el-button type="danger">批量删除</el-button>
+      <el-button type="danger" :disabled="!selectUser.length" @click="batchRemoveUser">批量删除</el-button>
     </div>
     <!-- 表格区域 -->
-    <el-table v-loading="isLoading" :data="userList" style="width: 100%" border stripe>
+    <el-table v-loading="isLoading" :data="userList" style="width: 100%" border stripe @selection-change="selectUser = $event">
       <el-table-column type="selection" />
       <el-table-column label="序号" type="index" width="100px" align="center" />
       <el-table-column label="用户名" prop="username" />
@@ -30,7 +30,7 @@
           <!-- 文字按钮 -->
           <el-button type="text" @click="showRoleDialog(row)">设置角色</el-button>
           <el-button type="text" @click="showUserDialog(row)">修改用户</el-button>
-          <el-button type="text">删除用户</el-button>
+          <el-button type="text" @click="removeUser(row.id)">删除用户</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -89,7 +89,7 @@
 </template>
 
 <script>
-import { reqSaveUserRole, reqUserList, reqUserRole, reqAddOrUpdateUser } from '@/api/acl/user'
+import { reqSaveUserRole, reqUserList, reqUserRole, reqAddOrUpdateUser, reqRemoveUser } from '@/api/acl/user'
 
 export default {
   name: 'User',
@@ -141,7 +141,9 @@ export default {
         selectRoleList: [],
         checkAll: false,
         isIndeterminate: true
-      }
+      },
+      // 已选中的用户
+      selectUser: []
     }
   },
   mounted() {
@@ -229,7 +231,7 @@ export default {
     async saveUser() {
       try {
         // 验证表单是否通过验证
-        // await this.$refs.userForm.validate()
+        await this.$refs.userForm.validate()
         // console.log(1)
         await reqAddOrUpdateUser(this.user)
         this.$message.success('操作成功')
@@ -248,6 +250,28 @@ export default {
         // 清除验证
         this.$refs.userForm.clearValidate()
       })
+    },
+    // 删除用户
+    async removeUser(id) {
+      await reqRemoveUser(id)
+      this.$message.success('操作成功')
+      this.page = this.userList.length > 1 ? this.page : this.page - 1
+      this.getUserList()
+    },
+    // 批量删除用户
+    async batchRemoveUser() {
+      try {
+        await this.$confirm('你确定要删除吗?')
+        const promise_arr = this.selectUser.map(item => reqRemoveUser(item.id))
+        // 并发promise
+        await Promise.all(promise_arr)
+        this.$message.success('操作成功')
+        this.page = this.userList.length > 1 ? this.page : this.page - 1
+        this.getUserList()
+      } catch (error) {
+        // 取消
+        console.log('取消了')
+      }
     }
   }
 }
