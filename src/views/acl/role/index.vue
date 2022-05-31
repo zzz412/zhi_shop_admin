@@ -26,7 +26,7 @@
       <el-table-column label="操作" width="250">
         <template v-slot="{ row }">
           <!-- 文字按钮 -->
-          <el-button type="text">分配权限</el-button>
+          <el-button type="text" @click="showRightsDialog(row)">分配权限</el-button>
           <el-button type="text">修改角色</el-button>
           <el-button type="text">删除角色</el-button>
         </template>
@@ -44,11 +44,30 @@
       @current-change="pageChange"
       @size-change="sizeChange"
     />
+    <!-- 分配权限 对话框 -->
+    <el-dialog :title="'分配权限 ' + role.roleName" :visible.sync="rightsDialogVisible" :before-close="cancelRights">
+      <!-- 树状结构 -->
+      <!-- data 渲染数据  props 渲染字段配置 show-checkbox 显示多选框  default-expand-all 默认展开所有-->
+      <div class="tree-view">
+        <el-tree
+          ref="tree"
+          :data="rightsList"
+          :props="{ label: 'name' , children: 'children' }"
+          node-key="id"
+          show-checkbox
+          default-expand-all
+        />
+      </div>
+      <div slot="footer">
+        <el-button @click="cancelRights">取 消</el-button>
+        <el-button type="primary" @click="saveRights">确 定</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { reqRoleList } from '@/api/acl/role'
+import { reqRoleList, reqRoleRightList } from '@/api/acl/role'
 import tablePage from '@/mixins/tablePage'
 
 export default {
@@ -57,7 +76,51 @@ export default {
   data() {
     return {
       // 定义请求数据方法
-      reqAjax: reqRoleList
+      reqAjax: reqRoleList,
+      // 分配权限对话框 是否显示
+      rightsDialogVisible: false,
+      // 操作的角色
+      role: {},
+      // 所有权限列表
+      rightsList: []
+    }
+  },
+  methods: {
+    // 显示权限对话框
+    async showRightsDialog(row) {
+      this.role = { ...row }
+      // 查询当前角色的权限列表
+      const res = await reqRoleRightList(row.id)
+      this.rightsList = res.data.children
+      // 设置默认选中权限【当前角色拥有的权限】  从所有权限中筛选select为true的值
+      // console.log(this.filterRights(res.data.children))
+      this.rightsDialogVisible = true
+      this.$nextTick(() => {
+        this.$refs.tree.setCheckedKeys(['1'])
+      })
+    },
+    // 筛选 当前角色的权限
+    filterRights(rights) {
+      const arr = []
+      rights.forEach(right => {
+        // 判断是否选中
+        if (right.select) {
+          // 判断是否还有子级
+          if (right.children) {
+            right.children = this.filterRights(right.children)
+          }
+          arr.push(right)
+        }
+      })
+      return arr
+    },
+    // 取消保存权限
+    cancelRights() {
+      this.rightsDialogVisible = false
+    },
+    // 保存权限
+    saveRights() {
+      this.rightsDialogVisible = false
     }
   }
 }
@@ -70,5 +133,9 @@ export default {
 }
 .opera-view {
   margin: 20px 0;
+}
+.tree-view {
+  height: 400px;
+  overflow-y: auto;
 }
 </style>
