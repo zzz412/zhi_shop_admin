@@ -16,8 +16,35 @@
       <el-button type="danger">批量删除</el-button>
     </div>
     <!-- 表格区域 -->
-    <el-table v-loading="isLoading" :data="tableData" style="width: 100%" border stripe>
+    <el-table v-loading="isLoading" :data="tableData" style="width: 100%" border stripe @expand-change="showRightsList">
       <el-table-column type="selection" />
+      <!-- 展开项 -->
+      <el-table-column type="expand">
+        <template>
+          <!-- 布局行 gutter 间隔10 -->
+          <el-row v-for="item, i in selectRights" :key="item.id" :gutter="10" class="flex-center bottom-border" :class="{ 'top-border': i === 0 }">
+            <!-- 布局列 总共比例24-->
+            <el-col :span="5">
+              <!-- 2级权限 -->
+              <el-tag>{{ item.name }}</el-tag>
+              <i class="el-icon-caret-right" />
+            </el-col>
+            <el-col :span="19">
+              <el-row v-for="item2, i2 in item.children" :key="item2.id" :gutter="10" class="flex-center" :class="{ 'top-border': i2 !== 0 }">
+                <el-col :span="5">
+                  <!-- 3级权限 -->
+                  <el-tag type="success">{{ item2.name }}</el-tag>
+                  <i class="el-icon-caret-right" />
+                </el-col>
+                <el-col :span="19">
+                  <!-- 4级权限 -->
+                  <el-tag v-for="item3 in item2.children" :key="item3.id" type="warning">{{ item3.name }}</el-tag>
+                </el-col>
+              </el-row>
+            </el-col>
+          </el-row>
+        </template>
+      </el-table-column>
       <el-table-column label="序号" type="index" width="100px" align="center" />
       <el-table-column label="角色名称" prop="roleName" />
       <el-table-column label="角色备注" prop="remark" />
@@ -48,7 +75,7 @@
     <el-dialog :title="'分配权限 ' + role.roleName" :visible.sync="rightsDialogVisible" :before-close="cancelRights">
       <!-- 树状结构 -->
       <!-- data 渲染数据  props 渲染字段配置 show-checkbox 显示多选框  default-expand-all 默认展开所有-->
-      <div class="tree-view">
+      <div v-loading="rightsDialogLoading" class="tree-view">
         <el-tree
           ref="tree"
           :data="rightsList"
@@ -60,14 +87,14 @@
       </div>
       <div slot="footer">
         <el-button @click="cancelRights">取 消</el-button>
-        <el-button type="primary" @click="saveRights">确 定</el-button>
+        <el-button :disabled="rightsDialogLoading" :loading="rightsLoading" type="primary" @click="saveRights">确 定</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 
 <script>
-import { reqRoleList, reqRoleRightList } from '@/api/acl/role'
+import { reqRoleList, reqRoleRightList, reqSaveRoleRight } from '@/api/acl/role'
 import tablePage from '@/mixins/tablePage'
 
 export default {
@@ -82,22 +109,36 @@ export default {
       // 操作的角色
       role: {},
       // 所有权限列表
-      rightsList: []
+      rightsList: [],
+      rightsLoading: false,
+      rightsDialogLoading: false,
+      // 角色选中的权限
+      selectRights: []
     }
   },
   methods: {
     // 显示权限对话框
     async showRightsDialog(row) {
       this.role = { ...row }
+      this.rightsDialogVisible = true
+      this.rightsDialogLoading = true
       // 查询当前角色的权限列表
       const res = await reqRoleRightList(row.id)
       this.rightsList = res.data.children
       // 设置默认选中权限【当前角色拥有的权限】  从所有权限中筛选select为true的值
-      // console.log(this.filterRights(res.data.children))
-      this.rightsDialogVisible = true
       this.$nextTick(() => {
-        this.$refs.tree.setCheckedKeys(['1'])
+        this.$refs.tree.setCheckedKeys(this.filterTreeRights(res.data.children))
+        this.rightsDialogLoading = false
       })
+    },
+    // 显示角色权限列表
+    async showRightsList(row) {
+      // console.log(row)
+      // 查询当前所有权限列表
+      const res = await reqRoleRightList(row.id)
+      // 筛选出当前角色权限列表
+      const selectRights = this.filterRights(res.data.children)
+      this.selectRights = selectRights[0].children
     },
     // 筛选 当前角色的权限
     filterRights(rights) {
@@ -114,13 +155,40 @@ export default {
       })
       return arr
     },
+    // 筛选 树结构需要权限ID
+    filterTreeRights(rights) {
+      const arr = []
+      rights.forEach(item => {
+        // 筛选select为true 并且 没有子级的
+        if (item.select && !item.children.length) {
+          arr.push(item.id)
+        } else if (item.children && item.children.length) {
+          arr.push(...this.filterTreeRights(item.children))
+        }
+      })
+      return arr
+    },
     // 取消保存权限
     cancelRights() {
       this.rightsDialogVisible = false
+      this.rightsList = []
     },
     // 保存权限
-    saveRights() {
-      this.rightsDialogVisible = false
+    async saveRights() {
+      this.rightsLoading = true
+      // 获取tree中已选中的节点、半选中的节点
+      const rightsIds = [...this.$refs.tree.getCheckedKeys(), ...this.$refs.tree.getHalfCheckedKeys()].join(',')
+      // 发起请求
+      try {
+        await reqSaveRoleRight(this.role.id, rightsIds)
+        this.$message.success('保存成功')
+        this.rightsLoading = false
+        this.rightsDialogVisible = false
+        this.rightsList = []
+      } catch (error) {
+        this.rightsLoading = false
+        console.log(error)
+      }
     }
   }
 }
@@ -137,5 +205,18 @@ export default {
 .tree-view {
   height: 400px;
   overflow-y: auto;
+}
+.el-tag {
+  margin: 8px;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+}
+.bottom-border {
+  border-bottom: 1px solid #eee;
+}
+.top-border {
+  border-top: 1px solid #eee;
 }
 </style>
