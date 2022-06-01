@@ -20,29 +20,31 @@
       <el-table-column type="selection" />
       <!-- 展开项 -->
       <el-table-column type="expand">
-        <template>
-          <!-- 布局行 gutter 间隔10 -->
-          <el-row v-for="item, i in selectRights" :key="item.id" :gutter="10" class="flex-center bottom-border" :class="{ 'top-border': i === 0 }">
-            <!-- 布局列 总共比例24-->
-            <el-col :span="5">
-              <!-- 2级权限 -->
-              <el-tag>{{ item.name }}</el-tag>
-              <i class="el-icon-caret-right" />
-            </el-col>
-            <el-col :span="19">
-              <el-row v-for="item2, i2 in item.children" :key="item2.id" :gutter="10" class="flex-center" :class="{ 'top-border': i2 !== 0 }">
-                <el-col :span="5">
-                  <!-- 3级权限 -->
-                  <el-tag type="success">{{ item2.name }}</el-tag>
-                  <i class="el-icon-caret-right" />
-                </el-col>
-                <el-col :span="19">
-                  <!-- 4级权限 -->
-                  <el-tag v-for="item3 in item2.children" :key="item3.id" type="warning">{{ item3.name }}</el-tag>
-                </el-col>
-              </el-row>
-            </el-col>
-          </el-row>
+        <template v-slot="{ row }">
+          <div v-loading="!row.selectRights.length" class="row-view">
+            <!-- 布局行 gutter 间隔10 -->
+            <el-row v-for="item, i in row.selectRights" :key="item.id" :gutter="10" class="flex-center bottom-border" :class="{ 'top-border': i === 0 }">
+              <!-- 布局列 总共比例24-->
+              <el-col :span="5">
+                <!-- 2级权限 -->
+                <el-tag>{{ item.name }}</el-tag>
+                <i class="el-icon-caret-right" />
+              </el-col>
+              <el-col :span="19">
+                <el-row v-for="item2, i2 in item.children" :key="item2.id" :gutter="10" class="flex-center" :class="{ 'top-border': i2 !== 0 }">
+                  <el-col :span="6">
+                    <!-- 3级权限 -->
+                    <el-tag type="success">{{ item2.name }}</el-tag>
+                    <i class="el-icon-caret-right" />
+                  </el-col>
+                  <el-col :span="18">
+                    <!-- 4级权限 -->
+                    <el-tag v-for="item3 in item2.children" :key="item3.id" type="warning">{{ item3.name }}</el-tag>
+                  </el-col>
+                </el-row>
+              </el-col>
+            </el-row>
+          </div>
         </template>
       </el-table-column>
       <el-table-column label="序号" type="index" width="100px" align="center" />
@@ -111,12 +113,25 @@ export default {
       // 所有权限列表
       rightsList: [],
       rightsLoading: false,
-      rightsDialogLoading: false,
+      rightsDialogLoading: false
       // 角色选中的权限
-      selectRights: []
+      // selectRights: []
     }
   },
   methods: {
+    // 获取表格数据
+    async getData() {
+      // 0. 进入加载状态
+      this.isLoading = true
+      // 1. 调用请求
+      const { page, limit, params } = this
+      const { data: { items, total }} = await this.reqAjax(page, limit, params)
+      // 1.1 关闭加载状态
+      this.isLoading = false
+      // 2. 保存请求的数据
+      this.tableData = items.map(item => ({ ...item, selectRights: [] }))
+      this.total = total - 1
+    },
     // 显示权限对话框
     async showRightsDialog(row) {
       this.role = { ...row }
@@ -133,12 +148,15 @@ export default {
     },
     // 显示角色权限列表
     async showRightsList(row) {
+      if (row.selectRights.length) return
       // console.log(row)
       // 查询当前所有权限列表
       const res = await reqRoleRightList(row.id)
       // 筛选出当前角色权限列表
       const selectRights = this.filterRights(res.data.children)
-      this.selectRights = selectRights[0].children
+      // 将当前角色权限列表 添加到 角色上
+      this.$set(row, 'selectRights', (selectRights[0] && selectRights[0].children) || [])
+      // row.selectRights = selectRights[0].children
     },
     // 筛选 当前角色的权限
     filterRights(rights) {
@@ -185,6 +203,7 @@ export default {
         this.rightsLoading = false
         this.rightsDialogVisible = false
         this.rightsList = []
+        this.getData()
       } catch (error) {
         this.rightsLoading = false
         console.log(error)
@@ -218,5 +237,8 @@ export default {
 }
 .top-border {
   border-top: 1px solid #eee;
+}
+.row-view {
+  min-height: 100px;
 }
 </style>
