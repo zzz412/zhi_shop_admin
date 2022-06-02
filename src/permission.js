@@ -41,7 +41,8 @@ router.beforeEach(async(to, from, next) => {
           // 派发actions 发起请求获取用户名
           await store.dispatch('user/getInfo')
 
-          next()
+          // 由于路由二次加载了 需要将路由重新进入一次
+          next({ ...to })
         } catch (error) {
           // 清除token 并且 注销登录
           await store.dispatch('user/resetToken')

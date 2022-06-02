@@ -9,7 +9,7 @@
         <template v-slot="{ row }">
           <el-button type="primary" icon="el-icon-plus" size="mini" :disabled="row.level === 4" @click="addRights(row)" />
           <el-button type="warning" icon="el-icon-edit" size="mini" :disabled="row.level === 1" @click="updateRights(row)" />
-          <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="row.level === 1" />
+          <el-button type="danger" icon="el-icon-delete" size="mini" :disabled="row.level === 1" @click="removeRights(row.id)" />
         </template>
       </el-table-column>
     </el-table>
@@ -17,7 +17,7 @@
     <el-dialog :title="dialogTitle" :visible.sync="dialogVisible" :before-close="cancel">
       <el-form ref="form" :model="rights" label-width="120px" :rules="rightsRules">
         <!-- 父权限名 -->
-        <el-form-item v-if="rights.level !== 2" label="父级名称">
+        <el-form-item v-if="rights.level !== 2 && !rights.id" label="父级名称">
           <el-input :value="rights.pname" disabled />
         </el-form-item>
         <el-form-item label="权限名称" prop="name">
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { reqRightsList } from '@/api/acl/rights'
+import { reqAddOrUpdateRights, reqRemoveRights, reqRightsList } from '@/api/acl/rights'
 // 新增操作
 // 点1级 ->  2级 (权限名, 权限值)  新增一级菜单
 // 点2级 ->  3级 (父级权限名, 权限名, 权限值) 新增二级菜单
@@ -87,6 +87,7 @@ export default {
       // 保存当前权限等级
       this.rights.level = row.level + 1
       this.rights.pname = row.name
+      this.rights.pid = row.id
       this.dialogVisible = true
     },
     // 修改操作
@@ -97,10 +98,33 @@ export default {
     // 取消保存
     cancel() {
       this.dialogVisible = false
+      this.rights = {
+        level: 0
+      }
     },
     // 确定保存
-    save() {
+    async save() {
+      // 设置权限类型  4级为按钮级 其他都为路由级   2按钮  1路由
+      this.rights.type = this.rights.level === 4 ? 2 : 1
+      // 发起请求
+      await reqAddOrUpdateRights(this.rights)
+      this.$message.success('保存成功')
+      this.getRightsList()
       this.dialogVisible = false
+      this.rights = {
+        level: 0
+      }
+    },
+    // 删除操作
+    async removeRights(id) {
+      try {
+        await this.$confirm('你确定要删除吗?')
+        await reqRemoveRights(id)
+        this.$message.success('删除成功')
+        this.getRightsList()
+      } catch (error) {
+        console.log('取消了')
+      }
     }
   }
 }

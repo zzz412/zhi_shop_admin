@@ -231,7 +231,7 @@ export default {
     async saveUser() {
       try {
         // 验证表单是否通过验证
-        await this.$refs.userForm.validate()
+        // await this.$refs.userForm.validate()
         // console.log(1)
         await reqAddOrUpdateUser(this.user)
         this.$message.success('操作成功')

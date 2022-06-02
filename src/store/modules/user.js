@@ -1,6 +1,6 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import router, { resetRouter, asyncRoutes, constantRoutes } from '@/router'
 
 const getDefaultState = () => {
   return {
@@ -9,7 +9,9 @@ const getDefaultState = () => {
     // 用户名
     name: '',
     // 用户头像
-    avatar: ''
+    avatar: '',
+    // 总路由表
+    routes: []
   }
 }
 
@@ -31,6 +33,10 @@ const mutations = {
   // 设置头像
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  // 设置路由表
+  SET_ROUTES: (state, routes) => {
+    state.routes = routes
   }
 }
 
@@ -55,24 +61,15 @@ const actions = {
   },
 
   // 获取用户信息
-  getInfo({ commit }) {
-    return new Promise((resolve, reject) => {
-      getInfo().then(response => {
-        const { data } = response
-
-        if (!data) {
-          return reject('获取数据失败 请重新登录')
-        }
-
-        const { name, avatar } = data
-
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        resolve(data)
-      }).catch(error => {
-        reject(error)
-      })
-    })
+  async getInfo({ commit }) {
+    const res = await getInfo()
+    const { name, avatar } = res.data
+    commit('SET_NAME', name)
+    commit('SET_AVATAR', avatar)
+    // 用户信息获取完成 ->  二次加载路由（addRoutes）
+    router.addRoutes(asyncRoutes)
+    // 保存二级加载后的路由表
+    commit('SET_ROUTES', [...constantRoutes, ...asyncRoutes])
   },
 
   // 退出登录

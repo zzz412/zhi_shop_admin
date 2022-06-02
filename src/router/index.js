@@ -25,6 +25,7 @@ import Layout from '@/layout'
   }
  */
 
+// 基础路由（提供用户基本操作【登录】）
 export const constantRoutes = [
   // 登录
   {
@@ -49,7 +50,11 @@ export const constantRoutes = [
       component: () => import('@/views/dashboard/index'),
       meta: { title: '主页', icon: 'dashboard' }
     }]
-  },
+  }
+]
+
+// 权限路由（登录后根据权限二次加载的）
+export const asyncRoutes = [
   // 权限管理
   {
     path: '/acl',
