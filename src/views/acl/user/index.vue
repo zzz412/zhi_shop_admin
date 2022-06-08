@@ -13,7 +13,7 @@
     </div>
     <!-- 操作区域 -->
     <div class="opera-view">
-      <el-button type="primary" @click="addUser">添加</el-button>
+      <el-button v-a="'btn.User.add'" type="primary" @click="addUser">添加</el-button>
       <el-button type="danger" :disabled="!selectUser.length" @click="batchRemoveUser">批量删除</el-button>
     </div>
     <!-- 表格区域 -->
@@ -30,7 +30,7 @@
           <!-- 文字按钮 -->
           <el-button type="text" @click="showRoleDialog(row)">设置角色</el-button>
           <el-button type="text" @click="showUserDialog(row)">修改用户</el-button>
-          <el-button type="text" @click="removeUser(row.id)">删除用户</el-button>
+          <el-button v-a="'btn.User.remove'" type="text" @click="removeUser(row.id)">删除用户</el-button>
         </template>
       </el-table-column>
     </el-table>

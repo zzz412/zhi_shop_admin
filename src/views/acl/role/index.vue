@@ -12,7 +12,8 @@
     </div>
     <!-- 操作区域 -->
     <div class="opera-view">
-      <el-button type="primary">添加</el-button>
+      <!-- 按钮级权限： 无权限按钮隐藏  有权限按钮显示 -->
+      <el-button v-a="'btn.Role.add'" type="primary">添加</el-button>
       <el-button type="danger">批量删除</el-button>
     </div>
     <!-- 表格区域 -->

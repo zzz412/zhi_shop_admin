@@ -53,36 +53,38 @@ export const constantRoutes = [
   }
 ]
 
-// 权限路由（登录后根据权限二次加载的）
+// 权限路由（登录后根据权限二次加载的）  rights 当前路由的权限值
 export const asyncRoutes = [
   // 权限管理
   {
     path: '/acl',
     component: Layout,
-    meta: { title: '权限管理', icon: 'el-icon-key' },
+    alwaysShow: true, // 始终显示一级菜单 【哪怕只有一个二级】
+    meta: { title: '权限管理', icon: 'el-icon-key', rights: 'Acl' },
     children: [
       // 用户管理
-      { path: '/acl/user', component: () => import('@/views/acl/user'), meta: { title: '用户管理' }},
+      { path: '/acl/user', component: () => import('@/views/acl/user'), meta: { title: '用户管理', rights: 'User' }},
       // 角色管理
-      { path: '/acl/role', component: () => import('@/views/acl/role'), meta: { title: '角色管理' }},
+      { path: '/acl/role', component: () => import('@/views/acl/role'), meta: { title: '角色管理', rights: 'Role' }},
       // 菜单管理
-      { path: '/acl/permission', component: () => import('@/views/acl/permission'), meta: { title: '菜单管理' }}
+      { path: '/acl/permission', component: () => import('@/views/acl/permission'), meta: { title: '菜单管理', rights: 'Permission' }}
     ]
   },
   // 商品管理
   {
     path: '/goods',
     component: Layout,
-    meta: { title: '商品管理', icon: 'el-icon-goods' },
+    alwaysShow: true, // 始终显示一级菜单 【哪怕只有一个二级】
+    meta: { title: '商品管理', icon: 'el-icon-goods', rights: 'Product' },
     children: [
       // 品牌
-      { path: '/goods/trademark', component: () => import('@/views/goods/trademark'), meta: { title: '品牌管理' }},
+      { path: '/goods/trademark', component: () => import('@/views/goods/trademark'), meta: { title: '品牌管理', rights: 'Trademark' }},
       // 属性
-      { path: '/goods/attr', component: () => import('@/views/goods/attr'), meta: { title: '属性管理' }},
+      { path: '/goods/attr', component: () => import('@/views/goods/attr'), meta: { title: '属性管理', rights: 'Attr' }},
       // SPU
-      { path: '/goods/spu', component: () => import('@/views/goods/spu'), meta: { title: 'SPU管理' }},
+      { path: '/goods/spu', component: () => import('@/views/goods/spu'), meta: { title: 'SPU管理', rights: 'Spu' }},
       // SKU
-      { path: '/goods/sku', component: () => import('@/views/goods/sku'), meta: { title: 'SKU管理' }}
+      { path: '/goods/sku', component: () => import('@/views/goods/sku'), meta: { title: 'SKU管理', rights: 'Sku' }}
     ]
   },
   // 404 page must be placed at the end !!!

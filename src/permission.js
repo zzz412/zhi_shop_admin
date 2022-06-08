@@ -44,6 +44,7 @@ router.beforeEach(async(to, from, next) => {
           // 由于路由二次加载了 需要将路由重新进入一次
           next({ ...to })
         } catch (error) {
+          console.log(error)
           // 清除token 并且 注销登录
           await store.dispatch('user/resetToken')
           // Message.error(error || 'Has Error')
